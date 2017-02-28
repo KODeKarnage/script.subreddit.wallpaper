@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+	<category label="Reddit Wallpaper">
+		<setting default="true" id="UpdateOnStart" label="Always update on startup" type="bool"/>
+		<!-- <setting id="UpdateFrequency" label="Check for new images" lvalues="hourly|daily|weekly" type="enum"/> -->
+		<setting default="false" id="StoreImages" label="Keep all downloaded images" type="bool"/>
+		<setting default="1" id="topx" label="Grab images from the top X posts" range="1,1,10" type="slider"/>
+		<setting default="false" id="allow_naughty" label="Allow naughty images" type="bool"/>
+		<setting default="true" id="default_folder" label="Use default folder to store images" type="bool"/>
+		<setting label="Folder location" type="folder" id="alternative_location" source="auto" option="writeable" visible="eq(-1, false)"/>
+		<setting id="subreddit_string" label="sub-reddit" type="text" visible="true" default="wallpapers"/>
+		<setting id="LastUpdate" label="" type="text" visible="false"/>
+	</category>
+</settings>

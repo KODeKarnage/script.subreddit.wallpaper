@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<addon id="script.subreddit.wallpaper" name="Subreddit Wallpaper" provider-name="KODeKarnage" version="0.0.01">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="script.module.praw" version="4.4.0"/>
+    </requires>
+    <extension library="default.py" point="xbmc.python.script">
+        <provides>executable</provides>
+    </extension>
+    <extension library="service.py" point="xbmc.service" start="login"/>
+    <extension point="xbmc.addon.metadata">
+        <description lang="en">Service that checks the top posts on /r/wallpapers and downloads that to a specific location. Perfect for Kodi skins that allow you to set custom images as your backgrounds. 
+            </description>
+        <language>en</language>
+        <platform>all</platform>
+        <license>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</license>
+        <forum/>
+        <website/>
+        <email>subliminal.karnage at gmail dot com</email>
+        <source>https://github.com/KODeKarnage/script.subreddit.wallpaper/</source>
+    </extension>
+</addon>

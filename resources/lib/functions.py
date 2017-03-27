@@ -32,6 +32,7 @@ import time
 
 from collections import namedtuple
 from glob import glob
+from io import BytesIO
 from PIL import Image as PILIMAGE
 
 import xbmc
@@ -41,8 +42,12 @@ __addon__              = xbmcaddon.Addon()
 __scriptPath__         = xbmc.translatePath( __addon__.getAddonInfo('profile') )
 __setting__            = __addon__.getSetting
 
+MBFACTOR = float(1 << 20)
+
 Image = namedtuple('Image', 'image_id, raw_url, image_url, image_ext')
 
+def log(logmsg):
+	xbmc.log(msg = 'Reddit Wallpaper: ' + str(logmsg))
 
 def _extract_image_url(url):
 
@@ -131,6 +136,24 @@ def download_images(image_url_list, default_folder='true', alternative_location=
 
 	# process the urls remaining in image list
 	for image in image_url_list:
+
+		log(image.image_url)
+
+		# test the image size, skip it if it is too large
+		r = requests.head(image.image_url,headers={'Accept-Encoding': 'identity'})
+		size = int(r.headers['content-length']) / MBFACTOR
+
+		if float(kwargs['max_size']) < size or size < float(kwargs['min_size']):
+			log('File too large: %sMB' % size)
+			continue
+
+		# check the dimensions of the image
+		req  = requests.get(image.image_url, headers={'User-Agent':'Mozilla5.0(Google spider)','Range':'bytes=0-{}'.format(4096)})
+		dims = PILIMAGE.open(BytesIO(req.content)).size
+
+		if dims[0] != 1920 or dims[1] != 1080: 
+			log('Wrong dimensions: %s' % str(dims))
+			continue
 	
 		# grab the image
 		res = requests.get(image.image_url, allow_redirects=False)
@@ -167,6 +190,7 @@ def download_images(image_url_list, default_folder='true', alternative_location=
 
 def get_settings():
 
-	keywords = ['UpdateOnStart', 'allow_naughty', 'StoreImages', 'topx', 'subreddit_string', 'alternative_location', 'default_folder']
+	keywords = ['UpdateOnStart', 'allow_naughty', 'StoreImages', 'topx', 'max_size', 'min_size',
+				'subreddit_string', 'alternative_location', 'default_folder']
 
 	return {kw: __setting__(kw) for kw in keywords}

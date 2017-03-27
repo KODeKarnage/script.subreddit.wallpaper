@@ -6,6 +6,8 @@
 		<setting default="false" id="StoreImages" label="Keep all downloaded images" type="bool"/>
 		<setting default="1" id="topx" label="Grab images from the top X posts" range="1,1,10" type="slider"/>
 		<setting default="false" id="allow_naughty" label="Allow naughty images" type="bool"/>
+		<setting default="10" id="max_size" label="Maximum image size (MB)" range="1,0.5,25" type="slider"/>
+		<setting default="0" id="min_size" label="Minimum image size (MB)" range="0,0.5,25" type="slider"/>
 		<setting default="true" id="default_folder" label="Use default folder to store images" type="bool"/>
 		<setting label="Folder location" type="folder" id="alternative_location" source="auto" option="writeable" visible="eq(-1, false)"/>
 		<setting id="subreddit_string" label="sub-reddit" type="text" visible="true" default="wallpapers"/>

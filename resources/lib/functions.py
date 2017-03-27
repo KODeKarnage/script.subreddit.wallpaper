@@ -34,14 +34,14 @@ from collections import namedtuple
 from glob import glob
 from PIL import Image as PILIMAGE
 
+import xbmc
 import xbmcaddon
 
 __addon__              = xbmcaddon.Addon()
-__scriptPath__         = __addon__.getAddonInfo('path')
+__scriptPath__         = xbmc.translatePath( __addon__.getAddonInfo('profile') )
 __setting__            = __addon__.getSetting
 
-
-Image = namedtuple('Image', 'image_id, raw_url, image_url')
+Image = namedtuple('Image', 'image_id, raw_url, image_url, image_ext')
 
 
 def _extract_image_url(url):
@@ -114,13 +114,13 @@ def get_reddit():
 
 def download_images(image_url_list, default_folder='true', alternative_location=None , StoreImages='true', **kwargs):
 
-	# get list of ids for the stored images
-	stored_image_ids = _get_stored_image_ids()
-
 	if default_folder != 'true' and alternative_location is not None:
 		folder = alternative_location
 	else:
 		folder = __scriptPath__
+
+	# get list of ids for the stored images
+	stored_image_ids = _get_stored_image_ids(folder)
 
 	top_slot = image_url_list[0]
 

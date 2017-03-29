@@ -18,26 +18,12 @@
 #  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 #  http://www.gnu.org/copyleft/gpl.html
 
-from resources.lib.functions import *
-
-
-def Main():
-
-	settings = get_settings()
-
-	if settings.get('UpdateOnStart', True):
-
-		reddit = get_reddit()
-
-		subreddit = get_sub(reddit, **settings)
-
-		image_url_list = get_image_urls(subreddit, **settings)
-
-		download_images(image_url_list, **settings)
-	
+from default import ServiceLoop
 
 if __name__ == "__main__":
 
-	Main()
+	ServiceLoop()
+
+
 
 

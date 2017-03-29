@@ -17,5 +17,123 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "#32000"
-msgid "General Settings"
+msgid "Reddit Wallpaper"
 msgstr ""
+
+msgctxt "#32001"
+msgid "Always update on startup"
+msgstr ""
+
+msgctxt "#32002"
+msgid "Retain all downloaded images"
+msgstr ""
+
+msgctxt "#32003"
+msgid "Grab images from the top X posts"
+msgstr ""
+
+msgctxt "#32004"
+msgid "Allow naughty images"
+msgstr ""
+
+msgctxt "#32005"
+msgid "Maximum image size (MB)"
+msgstr ""
+
+msgctxt "#32006"
+msgid "Minimum image size (MB)"
+msgstr ""
+
+msgctxt "#32007"
+msgid "Any"
+msgstr ""
+
+msgctxt "#32008"
+msgid "Strictly 16x9"
+msgstr ""
+
+msgctxt "#32009"
+msgid "Roughly 16x9"
+msgstr ""
+
+msgctxt "#32010"
+msgid "Strictly 4x3"
+msgstr ""
+
+msgctxt "#32011"
+msgid "Roughly 4x3"
+msgstr ""
+
+msgctxt "#32012"
+msgid "Precisely..."
+msgstr ""
+
+msgctxt "#32013"
+msgid "Roughly..."
+msgstr ""
+
+msgctxt "#32014"
+msgid "Width (Pixels)"
+msgstr ""
+
+msgctxt "#32015"
+msgid "Height (Pixels)"
+msgstr ""
+
+msgctxt "#32016"
+msgid "Allowable deviation (%)"
+msgstr ""
+
+msgctxt "#32017"
+msgid "Use default folder to store images"
+msgstr ""
+
+msgctxt "#32018"
+msgid "Folder location"
+msgstr ""
+
+msgctxt "#32019"
+msgid "sub-reddit"
+msgstr ""
+
+msgctxt "#32020"
+msgid "Image dimensions"
+msgstr ""
+
+msgctxt "#32021"
+msgid "Update every..."
+msgstr ""
+
+msgctxt "#32022"
+msgid "hour"
+msgstr ""
+
+msgctxt "#32023"
+msgid "day"
+msgstr ""
+
+msgctxt "#32024"
+msgid "week"
+msgstr ""
+
+msgctxt "#32025"
+msgid "30 mins"
+msgstr ""
+
+msgctxt "#32026"
+msgid "3 hours"
+msgstr ""
+
+msgctxt "#32027"
+msgid "never"
+msgstr ""
+
+msgctxt "#32028"
+msgid "month"
+msgstr ""
+
+msgctxt "#32029"
+msgid "Top posts in last..."
+msgstr ""
+
+

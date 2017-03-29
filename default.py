@@ -19,12 +19,31 @@
 #  http://www.gnu.org/copyleft/gpl.html
 #
 
-from resources.lib.functions import *
+from resources.lib.redditwallpaper import *
+import xbmc
 
 
-def Main():
+def ServiceLoop():
+	''' Loop used by the service '''
+
+	'''Never|30 Mins|Hour|3 Hours|Day|Week'''
 
 	settings = get_settings()
+
+	if settings.get('UpdateOnStart', True):
+
+		Main(settings)
+
+	while not xbmc.waitforAbort(60) and settings['UpdateFrequency'] != 0:
+
+		settings = get_settings()
+
+		if trigger_update(**settings):
+
+			Main(settings)
+
+
+def Main(settings):
 
 	reddit = get_reddit()
 
@@ -32,9 +51,16 @@ def Main():
 
 	image_url_list = get_image_urls(subreddit, **settings)
 
-	download_images(image_url_list, **settings)
-	
+	validated_url_list = validate_images(image_url_list, **settings)
+
+	download_images(validated_url_list, **settings)
+
+	store_lastupdated()
+
+
 
 if __name__ == '__main__':
+	
+	settings = get_settings()
 
-	Main()
+	Main(settings)

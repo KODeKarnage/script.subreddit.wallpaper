@@ -28,7 +28,7 @@ import re
 import requests
 import subprocess
 
-from datetime import datetime as dt
+from datetime import datetime, timedelta
 from collections import namedtuple
 from glob import glob
 from io import BytesIO
@@ -85,7 +85,9 @@ def _get_stored_image_ids(folder):
 
 def get_image_urls(subreddit, toplast, topx, allow_naughty, **kwargs):
 
-	links = subreddit.top(toplast, limit=topx)
+	time_filters = ['hour', 'day', 'week', 'month', 'all']
+
+	links = subreddit.top(time_filters[int(toplast)], limit=int(topx))
 
 	image_url_list = []
 
@@ -129,12 +131,12 @@ def _test_dimension(x, y, dimension, x_dim, y_dim, wriggle, **kwargs):
 	try:  		ratio = float(x) / float(y)
 	except: 	return None
 	
-	if   dimension == 1 and 1.76 < ratio < 1.78: 	return 1				# Strictly 16x9
-	elif dimension == 2 and 1.70 < ratio < 1.86: 	return 1 				# Roughly 16x9
-	elif dimension == 3 and 1.32 < ratio < 1.34: 	return 1				# Strictly 4x3
-	elif dimension == 4 and 1.25 < ratio < 1.40: 	return 1				# Roughly 4x3
-	elif dimension == 5 and x == int(x_dim) and y == int(y_dim): return 1	# Precisely...
-	elif dimension == 6: 	# Roughly...
+	if   dimension == 1.0 and 1.76 < ratio < 1.78: 	return 1				# Strictly 16x9
+	elif dimension == 2.0 and 1.70 < ratio < 1.86: 	return 1 				# Roughly 16x9
+	elif dimension == 3.0 and 1.32 < ratio < 1.34: 	return 1				# Strictly 4x3
+	elif dimension == 4.0 and 1.25 < ratio < 1.40: 	return 1				# Roughly 4x3
+	elif dimension == 5.0 and x == int(x_dim) and y == int(y_dim): return 1	# Precisely...
+	elif dimension == 6.0: 	# Roughly...
 
 		try:		wriggle = (int(wriggle) / 100.0)
 		except:		return None
@@ -173,7 +175,7 @@ def validate_images(image_url_list, **kwargs):
 
 	validated_url_list = [_validate(image, **kwargs) for image in image_url_list]
 
-	return [ x for x in validated_url_list if x not None]
+	return [ x for x in validated_url_list if x is not None]
 
 
 def _download_folder_location(default_folder=True, alternative_location=None, **kwargs):
@@ -229,6 +231,9 @@ def download_images(validated_url_list, retain_all_images=True, set_principal_im
 				log('Image failed to write: %s' % local_filename)
 				continue
 
+		else:
+			log('Image already downloaded: %s' % image.image_url)
+
 		# if the principal image has not been set, then copy this image into the main wallpaper slot
 		if set_principal_image:
 
@@ -258,16 +263,19 @@ def _validate_setting(value):
 	try:
 		return float(value)
 	except ValueError:
-		return value
+		pass
 
 	if value == 'true':  return True
 	if value == 'false': return False
 
+	return value
 
 def get_settings():
 
 
-	keys = ['UpdateOnStart', 'allow_naughty', 'retain_all_images', 'topx', 'toplast',
+	keys = ['UpdateOnStart', 'UpdateFrequency', 'LastUpdate',
+			'allow_naughty', 'retain_all_images',
+			'topx', 'toplast',
 			'subreddit_string', 'alternative_location', 'default_folder',
 			'max_size', 'min_size',
 			'dimension', 'x_dim', 'y_dim', 'wriggle'
@@ -278,11 +286,14 @@ def get_settings():
 	return dict(zip(keys, values))
 
 
-def _right_now():
+def _right_now(raw=False):
 
 	for _ in range(5):
 		try:
-			return dt.now().strftime('%Y-%m-%d %H:%M')
+			if raw:
+				return datetime.now()
+			else:
+				return datetime.now().strftime('%Y-%m-%d %H:%M')
 		except:
 			log('Error updating update time.')
 			time.sleep(1)
@@ -305,26 +316,26 @@ def trigger_update(LastUpdate, UpdateFrequency, **kwargs):
 		return True
 
 	try:
-		LastUpdate = dt.strptime(LastUpdate, '%Y-%m-%d %H:%M')
+		LastUpdate = datetime.strptime(LastUpdate, '%Y-%m-%d %H:%M')
 
 	except ValueError:
 		log('Could not parse last update time: %s' % LastUpdate)
 		return None
 
-	timedelta = {
-					1: dt.timedelta(minutes=30),
-					2: dt.timedelta(hours=1),
-					3: dt.timedelta(hours=3), 
-					4: dt.timedelta(hours=24), 
-					5: dt.timedelta(weeks=1)
+	deltas = {
+					1: timedelta(minutes=30),
+					2: timedelta(hours=1),
+					3: timedelta(hours=3), 
+					4: timedelta(hours=24), 
+					5: timedelta(weeks=1)
 					}
 
-	delta = timedelta(UpdateFrequency, None)
+	delta = deltas.get(int(UpdateFrequency), None)
 
 	if not delta:
 
 		return
 
-	return _right_now() < LastUpdate + delta
+	return _right_now(raw=True) > LastUpdate + delta
 	
 	

@@ -9,18 +9,18 @@
 		<setting default="true" 		id="default_folder" 		label="32017" type="bool"/>
 		<setting source="auto" 			id="alternative_location" 	label="32018" type="folder" option="writeable" visible="eq(-1, false)"/>
 
-		<setting default="5" 			id="topx" 					label="32003" range="1,1,10" type="slider"/>
-		<setting default="1"			id="toplast" 				label="32029" lvalues="32022|32023|32024|32028" type="enum"/>
+		<setting default="5" 			id="topx" 					label="32003" range="1,1,25" type="slider"/>
+		<setting default="2"			id="toplast" 				label="32029" lvalues="32022|32023|32024|32028|32030" type="enum"/>
 
 		<setting default="false" 		id="allow_naughty" 			label="32004" type="bool"/>
 		
-		<setting default="10" 			id="max_size" 				label="32005" range="1,0.5,25" type="slider"/>
-		<setting default="0" 			id="min_size" 				label="32006" range="0,0.5,25" type="slider"/>
+		<setting default="5" 			id="max_size" 				label="32005" range="1,0.5,25" type="slider"/>
+		<setting default="0" 			id="min_size" 				label="32006" range="0,0.25,10" type="slider"/>
 
-		<setting default="32007" 		id="dimension" 				label="32020" type="enum" lvalues="32007|32008|32009|32010|32011|32012|32013"/>
-		<setting default="1280" 		id="x_dim" 					label="32014" type="number" visible="eq(-1,6)|eq(-1,7)"/>
-		<setting default="800" 			id="y_dim" 					label="32015" type="number" visible="eq(-2,6)|eq(-2,7)"/>
-		<setting default="10" 			id="wriggle" 				label="32016" range="0,5,25" type="slider" visible="eq(-3,7)"/>
+		<setting default="0"	 		id="dimension" 				label="32020" type="enum" lvalues="32007|32008|32009|32010|32011|32012|32013"/>
+		<setting default="1280" 		id="x_dim" 					label="32014" type="number" visible="eq(-1,6)|eq(-1,5)"/>
+		<setting default="800" 			id="y_dim" 					label="32015" type="number" visible="eq(-2,6)|eq(-2,5)"/>
+		<setting default="10" 			id="wriggle" 				label="32016" range="0,5,25" type="slider" visible="eq(-3,6)"/>
 
 		<setting default="NotSet" 		id="LastUpdate" label="" type="text" visible="false"/>
 	</category>

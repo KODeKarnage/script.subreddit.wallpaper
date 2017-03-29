@@ -136,4 +136,8 @@ msgctxt "#32029"
 msgid "Top posts in last..."
 msgstr ""
 
+msgctxt "#32030"
+msgid "all"
+msgstr ""
+
 

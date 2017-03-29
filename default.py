@@ -34,7 +34,7 @@ def ServiceLoop():
 
 		Main(settings)
 
-	while not xbmc.waitforAbort(60) and settings['UpdateFrequency'] != 0:
+	while not xbmc.Monitor().waitForAbort(10) and settings['UpdateFrequency'] != 0.0:
 
 		settings = get_settings()
 
@@ -62,5 +62,7 @@ def Main(settings):
 if __name__ == '__main__':
 	
 	settings = get_settings()
+
+	log(settings)
 
 	Main(settings)

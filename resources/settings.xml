@@ -7,7 +7,7 @@
 
 		<setting default="false" 		id="retain_all_images" 		label="32002" type="bool"/>
 		<setting default="true" 		id="default_folder" 		label="32017" type="bool"/>
-		<setting source="auto" 			id="alternative_location" 	label="32018" type="folder" option="writeable" visible="eq(-1, false)"/>
+		<setting 						id="alternative_location" 	label="32018" type="folder" option="writeable" visible="eq(-1,false)"/>
 
 		<setting default="5" 			id="topx" 					label="32003" range="1,1,25" type="slider"/>
 		<setting default="2"			id="toplast" 				label="32029" lvalues="32022|32023|32024|32028|32030" type="enum"/>

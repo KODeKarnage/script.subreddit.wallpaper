@@ -19,7 +19,12 @@
 #  http://www.gnu.org/copyleft/gpl.html
 #
 
-from resources.lib.redditwallpaper import *
+from resources.lib.utils import get_settings, register_updatetime, log
+from resources.lib.reddit import get_reddit, get_subreddit, get_image_urls_from_subreddit
+from resources.lib.trigger import trigger_update
+from resources.lib.validate import validate_images
+from resources.lib.download import download_images
+
 import xbmc
 
 
@@ -50,6 +55,7 @@ def Main(settings):
 	reddit = get_reddit()
 
 	image_url_list = []
+	
 	subreddit_strings = settings['subreddit_string'].split(',')
 
 	for subreddit_string in subreddit_strings:
@@ -66,7 +72,7 @@ def Main(settings):
 
 	download_images(validated_url_list, **settings)
 
-	store_lastupdated()
+	register_updatetime()
 
 
 

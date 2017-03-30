@@ -19,9 +19,6 @@
 #  http://www.gnu.org/copyleft/gpl.html
 #
 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import requests
 
 from utils import log

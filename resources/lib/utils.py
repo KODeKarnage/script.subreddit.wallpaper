@@ -19,8 +19,6 @@
 #  http://www.gnu.org/copyleft/gpl.html
 #
 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from datetime import datetime
 import time
@@ -28,9 +26,10 @@ import time
 import xbmc
 import xbmcaddon
 
-__addon__              = xbmcaddon.Addon()
-__setting__            = __addon__.getSetting
-__setthis__            = __addon__.setSetting
+__addon__      = xbmcaddon.Addon()
+__setting__    = __addon__.getSetting
+__setthis__    = __addon__.setSetting
+__scriptPath__ = xbmc.translatePath( __addon__.getAddonInfo('profile') )
 
 
 def log(logmsg):

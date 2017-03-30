@@ -19,9 +19,6 @@
 #  http://www.gnu.org/copyleft/gpl.html
 #
 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from utils import log, right_now
 
 from datetime import datetime, timedelta
@@ -50,12 +47,12 @@ def trigger_update(LastUpdate, UpdateFrequency, **kwargs):
 
 	'''Never|30 Mins|Hour|3 Hours|Day|Week'''
 	deltas = {
-					1: timedelta(minutes=30),
-					2: timedelta(hours=1),
-					3: timedelta(hours=3), 
-					4: timedelta(hours=24), 
-					5: timedelta(weeks=1)
-					}
+				1: timedelta(minutes=30),
+				2: timedelta(hours=1),
+				3: timedelta(hours=3), 
+				4: timedelta(hours=24), 
+				5: timedelta(weeks=1)
+				}
 
 	delta = deltas.get(int(UpdateFrequency), None)
 

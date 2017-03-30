@@ -19,8 +19,6 @@
 #  http://www.gnu.org/copyleft/gpl.html
 #
 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from glob import glob
 from PIL import Image as PILIMAGE
@@ -28,14 +26,7 @@ import requests
 import shutil
 import os
 
-from utils import log
-
-import xbmc
-import xbmcaddon
-
-__addon__       = xbmcaddon.Addon()
-__scriptPath__  = xbmc.translatePath( __addon__.getAddonInfo('profile') )
-
+from utils import log, __scriptPath__
 
 
 def _download_folder_location(default_folder=True, alternative_location=None, **kwargs):
@@ -94,7 +85,6 @@ def download_images(validated_url_list, retain_all_images=True, set_principal_im
 
 		The Principal Image is always converted to a png file.
 	'''
-
 
 	# set the download location
 	folder = _download_folder_location(**kwargs)

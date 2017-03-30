@@ -93,7 +93,7 @@ msgid "Folder location"
 msgstr ""
 
 msgctxt "#32019"
-msgid "sub-reddit"
+msgid "sub-reddit (separate with comma for multiple)"
 msgstr ""
 
 msgctxt "#32020"

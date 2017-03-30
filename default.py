@@ -34,8 +34,10 @@ def ServiceLoop():
 
 		Main(settings)
 
-	while not xbmc.Monitor().waitForAbort(10) and settings['UpdateFrequency'] != 0.0:
+	while not xbmc.Monitor().waitForAbort(60) and settings['UpdateFrequency'] != 0.0:
 
+		# the waitForAbort block is released every 60 seconds so we can retrive updated settings
+		# and check the trigger time has not been reached.
 		settings = get_settings()
 
 		if trigger_update(**settings):
@@ -47,11 +49,20 @@ def Main(settings):
 
 	reddit = get_reddit()
 
-	subreddit = get_sub(reddit, **settings)
+	image_url_list = []
+	subreddit_strings = settings['subreddit_string'].split(',')
 
-	image_url_list = get_image_urls(subreddit, **settings)
+	for subreddit_string in subreddit_strings:
+
+		subreddit = get_subreddit(reddit, subreddit_string)
+
+		image_url_list += get_image_urls_from_subreddit(subreddit, **settings)
+
+	log('%s raw image urls identified' % len(image_url_list))
 
 	validated_url_list = validate_images(image_url_list, **settings)
+
+	log('%s validated image urls' % len(validated_url_list))
 
 	download_images(validated_url_list, **settings)
 

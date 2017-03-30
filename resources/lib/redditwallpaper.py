@@ -26,10 +26,11 @@ import os
 import praw
 import re
 import requests
+import shutil
 import subprocess
 
-from datetime import datetime, timedelta
 from collections import namedtuple
+from datetime import datetime, timedelta
 from glob import glob
 from io import BytesIO
 from PIL import Image as PILIMAGE
@@ -52,7 +53,27 @@ def log(logmsg):
 	xbmc.log(msg = 'Reddit Wallpaper: ' + str(logmsg), level=xbmc.LOGDEBUG)
 
 
+def _extract_id_from_filename(filename):
+	''' Extracts the image_id string from filename provided.
+	'''
+
+	if (filename.endswith('.png') or filename.endswith('.jpg')) and 'reddit_wp_' in filename:
+
+		return re.sub(r'_\..*', '', re.sub(r'.*reddit_wp_', '', filename))
+
+
+def _get_stored_image_ids(folder):
+	''' Returns a list of image_id strings from the images that have been stored locally.
+	'''
+
+	image_ids = [ _extract_id_from_filename(x) for x in glob(os.path.join(folder, '*')) ]
+
+	return [x for x in image_ids if x]
+
+
 def _extract_image_url(url):
+	''' Cleans the url and returns only the image link.
+	'''
 
 	if any([url.endswith('.jpg'), url.endswith('.png')]):
 
@@ -69,21 +90,11 @@ def _extract_image_url(url):
 		return 'http://i.imgur.com/%s.jpg' % image_id
 
 
-def _extract_id_from_filename(filename):
+def get_image_urls_from_subreddit(subreddit, toplast, topx, allow_naughty, **kwargs):
+	''' Returns a list of Image tuples from the desired subreddit.
 
-	if (filename.endswith('.png') or filename.endswith('.jpg')) and 'reddit_wp_' in filename:
-
-		return re.sub(r'_\..*', '', re.sub(r'.*reddit_wp_', '', filename))
-
-
-def _get_stored_image_ids(folder):
-
-	image_ids = [ _extract_id_from_filename(x) for x in glob(os.path.join(folder, '*')) ]
-
-	return [x for x in image_ids if x]
-
-
-def get_image_urls(subreddit, toplast, topx, allow_naughty, **kwargs):
+		Age restriction check is done at the earliest opportunity here.
+	'''
 
 	time_filters = ['hour', 'day', 'week', 'month', 'all']
 
@@ -112,7 +123,7 @@ def get_image_urls(subreddit, toplast, topx, allow_naughty, **kwargs):
 	return image_url_list
 
 
-def get_sub(reddit, subreddit_string='wallpapers', **kwargs):
+def get_subreddit(reddit, subreddit_string):
 
 	return reddit.subreddit(subreddit_string)
 
@@ -122,7 +133,10 @@ def get_reddit():
 	return praw.Reddit(user_agent='Get wallpaper from reddit', client_id='WCFt04Sg1ZOgOA', client_secret='dD6faoM8OrnDLl6qoOvstwgUXbE')
 
 
-def _test_dimension(x, y, dimension, x_dim, y_dim, wriggle, **kwargs):
+def _validate_dimension(x, y, dimension, x_dim, y_dim, wriggle, **kwargs):
+	''' Validates the provides image dimensions against those set by the user in the kodi settings.
+	'''
+
 
 	"Any|Strictly 16x9|Roughly 16x9|Strictly 4x3|Roughly 4x3|Precisely...|Roughly..."
 	
@@ -149,6 +163,8 @@ def _test_dimension(x, y, dimension, x_dim, y_dim, wriggle, **kwargs):
 
 
 def _validate(image, min_size, max_size, **kwargs):
+	''' Validates the image for fund size and image dimension.
+	'''
 
 	# test the image size in MB, skip it if it is too large or too small
 	r = requests.head(image.image_url,headers={'Accept-Encoding': 'identity'})
@@ -162,7 +178,7 @@ def _validate(image, min_size, max_size, **kwargs):
 	req  = requests.get(image.image_url, headers={'User-Agent':'Mozilla5.0(Google spider)','Range':'bytes=0-{}'.format(4096)})
 	d = PILIMAGE.open(BytesIO(req.content)).size
 
-	if not _test_dimension(x=d[0], y=d[1], **kwargs):
+	if not _validate_dimension(x=d[0], y=d[1], **kwargs):
 		log('Wrong dimensions: %s  (%s)' % (str(d), image.image_url))
 		return
 
@@ -172,6 +188,8 @@ def _validate(image, min_size, max_size, **kwargs):
 
 
 def validate_images(image_url_list, **kwargs):
+	''' Returns a list of images that pass the user requirements (validation)
+	'''
 
 	validated_url_list = [_validate(image, **kwargs) for image in image_url_list]
 
@@ -179,7 +197,8 @@ def validate_images(image_url_list, **kwargs):
 
 
 def _download_folder_location(default_folder=True, alternative_location=None, **kwargs):
-	'''Set the download location'''
+	''' Returns the user specified download location.
+	'''
 
 	if not default_folder and alternative_location is not None:
 		return alternative_location
@@ -188,6 +207,8 @@ def _download_folder_location(default_folder=True, alternative_location=None, **
 
 
 def _download(image, local_filename):
+	''' Function that actually does the downloading of the individual images. 
+	'''
 
 		# request the complete image
 		response = requests.get(image.image_url, allow_redirects=False)
@@ -204,6 +225,16 @@ def _download(image, local_filename):
 
 
 def download_images(validated_url_list, retain_all_images=True, set_principal_image=True, **kwargs):
+	''' Downloads the images described in the validated_url_list.
+
+		The contents of the storage folder is determined to ensure we are not downloading images
+		we already have.
+
+		The first image successfully downloaded is stored as the Principal Image.
+
+		The Principal Image is always converted to a png file.
+	'''
+
 
 	# set the download location
 	folder = _download_folder_location(**kwargs)
@@ -228,27 +259,31 @@ def download_images(validated_url_list, retain_all_images=True, set_principal_im
 				continue
 
 			except IOError:
-				log('Image failed to write: %s' % local_filename)
+				log('Image failed to write to: %s' % local_filename)
 				continue
 
 		else:
-			log('Image already downloaded: %s' % image.image_url)
+			log('Image already available at: %s' % image.image_url)
 
 		# if the principal image has not been set, then copy this image into the main wallpaper slot
 		if set_principal_image:
 
 			try:
-				PILIMAGE.open(local_filename).save(os.path.join(folder, 'REDDIT_WALLPAPER.png'))
+				if image.image_ext == 'png':
+					shutil.copy(local_filename, os.path.join(folder, 'REDDIT_WALLPAPER.png'))
+				else:
+					PILIMAGE.open(local_filename).save(os.path.join(folder, 'REDDIT_WALLPAPER.png'))
+				
 				set_principal_image = False
 
-				log('Principal image changed to: %s' % local_filename)
+				log('Principal image assigned as: %s' % local_filename)
 
 			except IOError:
 				log('Principal image failed write: %s' % local_filename)
 				continue
 
 			# if the user does not want to retain local files, then delete the one that was just downloaded
-			# and in any case stop processing images in the validated_url_list
+			# and in any case stop processing images in the validated_url_list because we have our image already
 			if not retain_all_images:
 				try:
 					os.remove(local_filename)
@@ -257,8 +292,11 @@ def download_images(validated_url_list, retain_all_images=True, set_principal_im
 				finally:
 					break
 
+	return set_principal_image
 
 def _validate_setting(value):
+	''' Used by the get_settings function to validate the settings from kodi.
+	'''
 
 	try:
 		return float(value)
@@ -270,8 +308,13 @@ def _validate_setting(value):
 
 	return value
 
-def get_settings():
 
+def get_settings():
+	''' This function retrieves and validates the user settings from KODI.
+		- string booleans are changed to actual booleans
+		- all strings that can be turned into floats are converted
+	Returns a dictionary of setting key and value pairs.		
+	'''
 
 	keys = ['UpdateOnStart', 'UpdateFrequency', 'LastUpdate',
 			'allow_naughty', 'retain_all_images',
@@ -287,6 +330,12 @@ def get_settings():
 
 
 def _right_now(raw=False):
+	''' Returns the current time. 
+		raw=True will return the raw datetime, but default is to convert it into a string.
+
+		Sometimes dt.now() throws some sort of "lock" error,
+		so we will give the function 1 second to throw errors and retrieve the time.
+	'''
 
 	for _ in range(5):
 		try:
@@ -296,16 +345,21 @@ def _right_now(raw=False):
 				return datetime.now().strftime('%Y-%m-%d %H:%M')
 		except:
 			log('Error updating update time.')
-			time.sleep(1)
+			time.sleep(0.2)
 
 
 def store_lastupdated():
+	''' Stores the current time as the LastUpdate record in the kodi settings.
+	'''
 
-		__setthis__('LastUpdate', _right_now() )
+	__setthis__('LastUpdate', _right_now() )
 
 
 def trigger_update(LastUpdate, UpdateFrequency, **kwargs):
-	'''Never|30 Mins|Hour|3 Hours|Day|Week'''
+	''' Returns a boolean indicating whether the current time is after the
+		last updated time store in the kodi settings plus the desired delay between 
+		update checks.
+	'''
 
 	# if the update frequency is never then return None
 	if UpdateFrequency == 0: 
@@ -322,6 +376,7 @@ def trigger_update(LastUpdate, UpdateFrequency, **kwargs):
 		log('Could not parse last update time: %s' % LastUpdate)
 		return None
 
+	'''Never|30 Mins|Hour|3 Hours|Day|Week'''
 	deltas = {
 					1: timedelta(minutes=30),
 					2: timedelta(hours=1),

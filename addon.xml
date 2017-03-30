@@ -3,7 +3,7 @@
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.praw" version="4.4.0"/>
-        <import addon="script.module.requests" version="0.0.0"/>
+        <import addon="script.module.requests" version="2.12.4"/>
     </requires>
     <extension library="default.py" point="xbmc.python.script">
         <provides>executable</provides>

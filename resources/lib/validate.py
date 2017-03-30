@@ -26,6 +26,8 @@ from utils import log
 from io import BytesIO
 from PIL import Image as PILIMAGE
 
+import time
+
 MBFACTOR = float(1 << 20)
 
 
@@ -71,7 +73,11 @@ def _validate(image, min_size, max_size, **kwargs):
 
 	# check the dimensions of the image
 	req  = requests.get(image.image_url, headers={'User-Agent':'Mozilla5.0(Google spider)','Range':'bytes=0-{}'.format(4096)})
-	d = PILIMAGE.open(BytesIO(req.content)).size
+	try:
+		d = PILIMAGE.open(BytesIO(req.content)).size
+	except IOError:
+		log('IOError reading %s' % image.image_url)
+		return
 
 	if not _validate_dimension(x=d[0], y=d[1], **kwargs):
 		log('Wrong dimensions: %s  (%s)' % (str(d), image.image_url))

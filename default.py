@@ -74,6 +74,7 @@ def Main(settings):
 
 	register_updatetime()
 
+	log('Process Complete')
 
 
 if __name__ == '__main__':

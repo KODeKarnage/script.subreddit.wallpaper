@@ -95,5 +95,9 @@ def register_updatetime():
 	''' Stores the current time as the LastUpdate record in the kodi settings.
 	'''
 
-	__setthis__('LastUpdate', right_now() )
+	current_time = right_now()
+
+	log('Updating LastUpdate: %s' % current_time)
+
+	__setthis__('LastUpdate', current_time )
 

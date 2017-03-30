@@ -26,6 +26,7 @@ import praw
 import requests
 
 from collections import namedtuple
+from utils import log
 
 
 Image = namedtuple('Image', 'image_id, raw_url, image_url, image_ext')
@@ -57,6 +58,8 @@ def get_image_urls_from_subreddit(subreddit, toplast, topx, allow_naughty, **kwa
 	'''
 
 	time_filters = ['hour', 'day', 'week', 'month', 'all']
+
+	log('Getting top posts from /r/%s' % subreddit)
 
 	links = subreddit.top(time_filters[int(toplast)], limit=int(topx))
 

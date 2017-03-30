@@ -21,10 +21,11 @@
 
 
 from glob import glob
+import os
 from PIL import Image as PILIMAGE
+import re
 import requests
 import shutil
-import os
 
 from utils import log, __scriptPath__
 
@@ -73,6 +74,8 @@ def _download(image, local_filename):
 	with open(local_filename, 'wb') as f:
 		for chunk in response.iter_content(4096):
 			f.write(chunk)
+
+	log('Downloaded: %s' % image.image_url)
 
 
 def download_images(validated_url_list, retain_all_images=True, set_principal_image=True, **kwargs):

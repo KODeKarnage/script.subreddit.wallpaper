@@ -59,15 +59,28 @@ def _validate_dimension(x, y, dimension, x_dim, y_dim, wriggle, **kwargs):
 	return None
 
 
-def _validate(image, min_size, max_size, **kwargs):
+def _validate(image, min_size, max_size, check_size, **kwargs):
 	''' Validates the image for fund size and image dimension.
 	'''
 
 	# test the image size in MB, skip it if it is too large or too small
 	r = requests.head(image.image_url,headers={'Accept-Encoding': 'identity'})
-	size = int(r.headers['content-length']) / MBFACTOR
 
-	if not float(min_size) <= size <= float(max_size):
+	try:
+		size = int(r.headers['content-length']) / MBFACTOR
+	except KeyError:
+		log('Error parsing content-length from response.')
+
+		# Return None, unless the user has opted to ignore the image size
+		# in which case, carry on.
+		if check_size:
+			return
+
+	except Exception as e:
+		log_unhandledException('validating link size.')
+		return
+
+	if check_size and (not float(min_size) <= size <= float(max_size)):
 		log('File too large/small: %sMB  (%s)' % (size, image.image_url))
 		return
 
@@ -78,8 +91,11 @@ def _validate(image, min_size, max_size, **kwargs):
 	except IOError:
 		log('IOError reading %s' % image.image_url)
 		return
+	except Exception as e:
+		log_unhandledException('validating link dimension.')
+		return
 
-	if not _validate_dimension(x=d[0], y=d[1], **kwargs):
+	if not _validate_dimension(x=d[0], y=d[1],  **kwargs):
 		log('Wrong dimensions: %s  (%s)' % (str(d), image.image_url))
 		return
 

@@ -115,6 +115,10 @@ def download_images(validated_url_list, retain_all_images=True, set_principal_im
 				log('Image failed to write to: %s' % local_filename)
 				continue
 
+			except Exception as e:
+				log_unhandledException('downloading image.')
+				continue
+
 		else:
 			log('Image already available at: %s' % image.image_url)
 
@@ -138,12 +142,18 @@ def download_images(validated_url_list, retain_all_images=True, set_principal_im
 				# We have failed to set a Principal Image, move on and try the next url
 				continue
 
+			except Exception as e:
+				log_unhandledException('replacing Principal Image.')
+				continue
+
 			# if the user does not want to retain local files, then delete the one that was just downloaded
 			if not retain_all_images:
 				try:
 					os.remove(local_filename)
 				except IOError:
 					log('Failed to remove local file: %s' % local_filename)
+				except Exception as e:
+					log_unhandledException('removing local file.')
 				finally:
 					# Stop processing images in the validated_url_list because we have our image already.
 					# We only reach here if set_principal_image has been flipped

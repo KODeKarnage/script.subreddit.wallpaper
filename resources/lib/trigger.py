@@ -45,6 +45,10 @@ def trigger_update(LastUpdate, UpdateFrequency, **kwargs):
 		log('Could not parse last update time: %s' % LastUpdate)
 		return None
 
+	except Exception as e:
+		log_unhandledException('parsing last update time.')
+		return None		
+
 	'''Never|30 Mins|Hour|3 Hours|Day|Week'''
 	deltas = {
 				1: timedelta(minutes=30),

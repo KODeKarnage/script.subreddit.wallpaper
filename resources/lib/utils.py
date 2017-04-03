@@ -82,7 +82,7 @@ def get_settings():
 			'allow_naughty', 'retain_all_images',
 			'topx', 'toplast',
 			'subreddit_string', 'alternative_location', 'default_folder',
-			'max_size', 'min_size',
+			'check_size', 'max_size', 'min_size',
 			'dimension', 'x_dim', 'y_dim', 'wriggle'
 				]
 
@@ -100,4 +100,15 @@ def register_updatetime():
 	log('Updating LastUpdate: %s' % current_time)
 
 	__setthis__('LastUpdate', current_time )
+
+
+def log_unhandledException(where=None):
+
+	exc_type, exc_value, exc_traceback = sys.exc_info()
+
+	lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
+
+	log('Unhandled Exception %s\n' % where)
+	log(''.join(lines))
+
 

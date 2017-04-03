@@ -76,6 +76,10 @@ def get_image_urls_from_subreddit(subreddit, toplast, topx, allow_naughty, **kwa
 		except ValueError:
 			url = link.url
 
+		except Exception as e:
+			log_unhandledException('obtaining image link from url.')
+			url = link.url				
+
 		image_url = _extract_image_url(url)
 
 		if not image_url:

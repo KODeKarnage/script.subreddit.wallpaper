@@ -21,7 +21,7 @@ msgid "Reddit Wallpaper"
 msgstr ""
 
 msgctxt "#32001"
-msgid "Always update on startup"
+msgid "Force update on startup"
 msgstr ""
 
 msgctxt "#32002"
@@ -140,4 +140,7 @@ msgctxt "#32030"
 msgid "all"
 msgstr ""
 
+msgctxt "#32031"
+msgid "Limit the image size"
+msgstr ""
 

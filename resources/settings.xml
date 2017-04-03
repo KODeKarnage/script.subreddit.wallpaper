@@ -14,8 +14,9 @@
 
 		<setting default="false" 		id="allow_naughty" 			label="32004" type="bool"/>
 		
-		<setting default="5" 			id="max_size" 				label="32005" range="1,0.5,25" type="slider"/>
-		<setting default="0" 			id="min_size" 				label="32006" range="0,0.25,10" type="slider"/>
+		<setting default="false" 		id="check_size" 			label="32031" type="bool"/>
+		<setting default="5" 			id="max_size" 				label="32005" range="1,0.5,25" visible="eq(-1,true)" type="slider"/>
+		<setting default="0" 			id="min_size" 				label="32006" range="0,0.25,10" visible="eq(-2,true)" type="slider"/>
 
 		<setting default="0"	 		id="dimension" 				label="32020" type="enum" lvalues="32007|32008|32009|32010|32011|32012|32013"/>
 		<setting default="1280" 		id="x_dim" 					label="32014" type="number" visible="eq(-1,6)|eq(-1,5)"/>
